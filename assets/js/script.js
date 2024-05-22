@@ -89,18 +89,64 @@ function renderTaskList() {
 }
 
 // Todo: create a function to handle adding a new task
-function handleAddTask(event){
-
+function addTask(title, description, dueDate) {
+    const task = {
+        id: generateTaskId(),
+        title,
+        description,
+        dueDate,
+        status: 'To Do'
+    };
+    taskList.push(task);
+    saveTasksToStorage(taskList);
+    renderTaskList();
 }
 
-// Todo: create a function to handle deleting a task
-function handleDeleteTask(event){
+//Save tasks to local storage
+function saveTasksToStorage() {
+    localStorage.setItem("tasks", JSON.stringify(taskList));
+    localStorage.setItem("nextId", JSON.stringify(nextId));
+}
 
+// Handle form submission
+document.getElementById('addTaskForm').addEventListener('submit', function (event) {
+    event.preventDefault();
+    const title = document.getElementById('taskTitle').value;
+    const description = document.getElementById('taskDescription').value;
+    const dueDate = document.getElementById('dueDate').value;
+
+    addTask(title, description, dueDate);
+
+    document.getElementById('addTaskForm').reset();
+    $('#formModal').modal('hide');
+});
+
+// Todo: create a function to handle deleting a task
+function handleDeleteTask(event) {
+    const taskId = parseInt(event.target.dataset.id);
+    taskList = taskList.filter(task => task.id !== taskId);
+    saveTasksToStorage(taskList);
+    renderTaskList();
 }
 
 // Todo: create a function to handle dropping a task into a new status lane
 function handleDrop(event, ui) {
+    const taskId = parseInt(ui.draggable[0].dataset.id);
+    const draggedCardTitle = event.target.querySelector('.card-title').textContent;
 
+    taskList.forEach((task) => {
+        if (task.id === taskId) {
+            if (draggedCardTitle === "To Do") {
+                task.status = "To Do";
+            } else if (draggedCardTitle === "In Progress") {
+                task.status = "In Progress";
+            } else if (draggedCardTitle === "Done") {
+                task.status = "Done";
+            }
+        }
+    });
+    saveTasksToStorage(taskList);
+    renderTaskList();
 }
 
 // Todo: when the page loads, render the task list, add event listeners, make lanes droppable, and make the due date field a date picker

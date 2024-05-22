@@ -2,9 +2,15 @@
 let taskList = JSON.parse(localStorage.getItem("tasks"));
 let nextId = JSON.parse(localStorage.getItem("nextId"));
 
+function readTasksFromStorage() {
+    return JSON.parse(localStorage.getItem("tasks")) || [];
+}
+
 // Todo: create a function to generate a unique task id
 function generateTaskId() {
-
+    const id = nextId++;
+    localStorage.setItem("nextId", JSON.stringify(nextId));
+    return id;
 }
 
 // Todo: create a function to create a task card

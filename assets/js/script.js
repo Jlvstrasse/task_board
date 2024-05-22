@@ -1,6 +1,6 @@
 // Retrieve tasks and nextId from localStorage
-let taskList = JSON.parse(localStorage.getItem("tasks"));
-let nextId = JSON.parse(localStorage.getItem("nextId"));
+let taskList = JSON.parse(localStorage.getItem("tasks")) || [];
+let nextId = parseInt(localStorage.getItem("nextId")) || 1;
 
 function readTasksFromStorage() {
     return JSON.parse(localStorage.getItem("tasks")) || [];
@@ -12,6 +12,7 @@ function generateTaskId() {
     localStorage.setItem("nextId", JSON.stringify(nextId));
     return id;
 }
+
 
 // Todo: create a function to create a task card
 function createTaskCard(task) {
@@ -60,6 +61,7 @@ function createTaskCard(task) {
     return card;
 }
 
+
 // Todo: create a function to render the task list and make cards draggable
 function renderTaskList() {
     document.getElementById('todo-cards').innerHTML = '';
@@ -67,7 +69,7 @@ function renderTaskList() {
     document.getElementById('done-cards').innerHTML = '';
 
     const tasks = readTasksFromStorage();
-    console.log('Rendering tasks:', tasks); // Log
+    console.log('Rendering tasks:', tasks); // To debugg
 
     tasks.forEach((task) => {
         const taskCard = createTaskCard(task);
@@ -87,6 +89,7 @@ function renderTaskList() {
         helper: 'clone'
     });
 }
+    
 
 // Todo: create a function to handle adding a new task
 function addTask(title, description, dueDate) {
@@ -98,7 +101,7 @@ function addTask(title, description, dueDate) {
         status: 'To Do'
     };
     taskList.push(task);
-    saveTasksToStorage(taskList);
+    saveTasksToStorage();
     renderTaskList();
 }
 
@@ -121,11 +124,12 @@ document.getElementById('addTaskForm').addEventListener('submit', function (even
     $('#formModal').modal('hide');
 });
 
+
 // Todo: create a function to handle deleting a task
 function handleDeleteTask(event) {
     const taskId = parseInt(event.target.dataset.id);
     taskList = taskList.filter(task => task.id !== taskId);
-    saveTasksToStorage(taskList);
+    saveTasksToStorage();
     renderTaskList();
 }
 
@@ -133,6 +137,7 @@ function handleDeleteTask(event) {
 function handleDrop(event, ui) {
     const taskId = parseInt(ui.draggable[0].dataset.id);
     const draggedCardTitle = event.target.querySelector('.card-title').textContent;
+    
 
     taskList.forEach((task) => {
         if (task.id === taskId) {
@@ -145,7 +150,7 @@ function handleDrop(event, ui) {
             }
         }
     });
-    saveTasksToStorage(taskList);
+    saveTasksToStorage();
     renderTaskList();
 }
 
